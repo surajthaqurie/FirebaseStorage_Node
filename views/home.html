@@ -40,9 +40,9 @@
     <img id="image" />
     <button onclick="uploadImage()">Upload Image</button>
 
-    <!-- <video id="video" width="400" height="400" autoplay></video>
+    <video id="video" width="400" height="400" autoplay controls playsinline></video>
     <button id="snap">Capture</button>
-    <canvas id="canvas" width="640" height="480"></canvas> -->
+    <canvas id="canvas" width="640" height="480"></canvas>
 
 </body>
 <script>
@@ -71,7 +71,66 @@
             });
     }
 
+    // webcam code
 
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+
+    const snap = document.getElementById('snap');
+
+
+    const constraints = {
+        audio: false,
+        video: {
+            width: 400, height: 400
+        }
+    }
+
+    // start webcam
+
+    async function init() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            handlestream(stream)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    function handlestream(stream) {
+        window.stream = stream;
+        video.srcObject = stream;
+    }
+    let context = canvas.getContext('2d');
+
+    snap.addEventListener('click', function () {
+        context.drawImage(video, 0, 0, 640, 480);
+
+        let image = new Image();
+
+        image.id = 'pic';
+
+        image.src = canvas.toDataURL('image/png');
+
+        let button = document.createElement('button');
+
+        button.textContent = 'Upload Image';
+
+        document.body.appendChild(button);
+
+        button.onclick = function () {
+            const ref = firebase.storage().ref();
+
+            ref.child(new Date() + '-' + 'base64').putString(image.src, 'data_url')
+                .then(function (snapshot) {
+                    console.log('image Uploded');
+
+                    alert('Image uploaded');
+                })
+        }
+
+    });
+    init();
 </script>
 
 </html>
