@@ -4,13 +4,74 @@
 <head>
     <title>Firebase Storage</title>
 
-
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
 
+    <!-- The core Firebase Storage SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCoQaqrOYyXjmv9IJxeNqXt4K1NQuPz-8w",
+            authDomain: "node-firebase-fd9fd.firebaseapp.com",
+            databaseURL: "https://node-firebase-fd9fd.firebaseio.com",
+            projectId: "node-firebase-fd9fd",
+            storageBucket: "node-firebase-fd9fd.appspot.com",
+            messagingSenderId: "775051055235",
+            appId: "1:775051055235:web:6331bf08a7a898a9d80bb6"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        // console.log(firebase);
+    </script>
 </head>
 
 <body>
-Hello Firebase
+    <br />
+    <h2> Hello Firebase </h2>
+    <br />
+    <br />
+
+    <input type="file" id="photo" name="photo" multiple="" accept="image/" />
+    <img id="image" />
+    <button onclick="uploadImage()">Upload Image</button>
+
+    <!-- <video id="video" width="400" height="400" autoplay></video>
+    <button id="snap">Capture</button>
+    <canvas id="canvas" width="640" height="480"></canvas> -->
+
 </body>
+<script>
+    function uploadImage() {
+        const ref = firebase.storage().ref();
+        // console.log(ref);
+
+        const file = document.querySelector("#photo").files[0];
+
+        const name = new Date() + "-" + file.name;
+
+        const metadata = {
+            contentType: file.type
+        }
+        const task = ref.child(name).put(file, metadata);
+
+        task.then(snapshot => snapshot.ref.getDownloadURL())
+            .then(url => {
+                console.log(url);
+                alert("Image upload Successful");
+                const image = document.querySelector('#image');
+                image.src = url;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+
+</script>
 
 </html>
